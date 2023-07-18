@@ -10,6 +10,7 @@ workflows:
         - google_play
       vars:
         PACKAGE_NAME: "io.codemagic.sample.androidnative"
+      flutter: stable
     scripts:
       # - name: Set Android SDK location
       #   script: |
@@ -26,12 +27,19 @@ workflows:
           mkdir -p test-results
           flutter test --machine > test-results/flutter.json
         test_report: test-results/flutter.json
-      - name: Build Android APK
-        working_directory: android
-        script: ./gradlew assembleRelease
+      - name: Set up local.properties
+        script: | 
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Get Flutter packages
+        script: | 
+          flutter packages pub get
+      - name: Build AAB with Flutter
+        script: | 
+          flutter build appbundle --release
     artifacts:
-      - app/build/outputs/**/**/*.apk
-      - app/build/outputs/**/*.aab
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
     publishing:
       email:
         recipients:
