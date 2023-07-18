@@ -12,16 +12,6 @@ workflows:
         PACKAGE_NAME: "io.codemagic.sample.androidnative"
       flutter: stable
     scripts:
-      # - name: Set Android SDK location
-      #   script: |
-      #     LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
-      #     if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
-      #         # fallback in case no build number was found from google play. Alternatively, you can `exit 1` to fail the build
-      #         UPDATED_BUILD_NUMBER=$BUILD_NUMBER
-      #     else
-      #         UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
-      #     fi
-      #     ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER -PversionName=1.0.$UPDATED_BUILD_NUMBER
       - name: Unit tests
         script: |
           mkdir -p test-results
@@ -36,8 +26,17 @@ workflows:
       - name: Build AAB with Flutter
         script: | 
           flutter build appbundle --release
+      - name: Build universal apk
+        script: | 
+          android-app-bundle build-universal-apk \
+            --bundle 'project_directory/build/**/outputs/**/*.aab' \
+            --ks /tmp/keystore.keystore \
+            --ks-pass $CM_KEYSTORE_PASSWORD \
+            --ks-key-alias $CM_KEY_ALIAS \
+            --key-pass $CM_KEY_PASSWORD
     artifacts:
       - build/**/outputs/**/*.aab
+      - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
     publishing:
