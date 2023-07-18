@@ -29,7 +29,7 @@ workflows:
       - name: Build universal apk
         script: | 
           android-app-bundle build-universal-apk \
-            --bundle 'project_directory/build/**/outputs/**/*.aab' \
+            --bundle 'build/**/outputs/**/*.aab' \
             --ks codemagic.keystore \
             --ks-pass $CM_KEYSTORE_PASSWORD \
             --ks-key-alias $CM_KEY_ALIAS \
