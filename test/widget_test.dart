@@ -11,20 +11,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:first_app/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Text is displayed correctly', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: GradientContainer(),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find the Text widget
+    final textFinder = find.text('My new app inside 2');
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that the Text widget is present
+    expect(textFinder, findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify the text style
+    final textWidget = tester.widget<Text>(textFinder);
+    expect(textWidget.style?.color, Colors.white);
+    expect(textWidget.style?.fontSize, 28);
   });
 }
